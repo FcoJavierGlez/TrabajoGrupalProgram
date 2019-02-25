@@ -56,6 +56,16 @@ public class Articulo {
   
   
   /**
+   * Asigna una cantidad determinada de stock en un artículo.
+   * 
+   * @param numArticulos  La cantidad a insertar en el stock
+   */
+  protected void setStock(int numArticulos) {    
+    this.stock = numArticulos;    
+  }
+  
+  
+  /**
    * Este método modifica el stock de un artículo determinado.
    * <ul>
    * <li>Añade artículos si el valor de entrada es positivo.</li>
@@ -66,22 +76,19 @@ public class Articulo {
    * En caso de querer reducir un total de artículos superior al almacenado muestra un mensaje 
    * de información al usuario y no hace ningún cambio.
    * 
-   * @param numArticulos  La cantidad a modificar el stock
+   * @param cantidad  Unidades a modificar en el stock (int)
    */
-  protected void setStock(int numArticulos) {
-    
-    if (numArticulos<0) {      
-      if (Math.abs(numArticulos)>this.stock) {
+  protected void cambiaStock(int cantidad) {    
+    if (cantidad<0) {      
+      if (Math.abs(cantidad)>this.stock) {
         System.out.print("\n\nNo puede retirar más artículos de los que hay disponibles en stock.");
-        System.out.print("\n\nUsted desea retirar " + Math.abs(numArticulos) + " artículos y hay en stock " + this.stock + ".");
-        System.out.print("\n\nPor favor introduzca una cantidad válida.");
+        System.out.print("\n\nUsted desea retirar " + Math.abs(cantidad) + " artículos y hay en stock " + this.stock + ".");
       } else {
-        this.stock += numArticulos;
+        this.stock += cantidad;
       }      
     } else {      
-      this.stock += numArticulos;      
-    }
-    
+      this.stock += cantidad;      
+    }    
   }
   
   
@@ -159,6 +166,46 @@ public class Articulo {
    */
   protected void setCodigo(int numeroCodigo) {
     this.codigo = numeroCodigo;
+  }
+  
+  
+  /**
+   * Inserta la descripción del artículo.
+   * 
+   * @param descripcion  Descripción (String) del artículo.
+   */
+  protected void setDescripcion(String descripcion) {
+    this.descripcion = descripcion;
+  }
+  
+  
+  /**
+   * Inserta el precio de compra del artículo.
+   * 
+   * @param precioCompra  Precio (double) con el que fue comprado el artículo.
+   */
+  protected void setPrecioCompra(double precioCompra) {
+    this.precioCompra = precioCompra;
+  }
+  
+  
+  /**
+   * Inserta el precio de venta del artículo.
+   * 
+   * @param precioVenta  Precio (double) de venta del artículo.
+   */
+  protected void setPrecioVenta(double precioVenta) {
+    this.precioVenta = precioVenta;
+  }
+  
+  
+  /**
+   * Inserta la disponibilidad del artículo.
+   * 
+   * @param descatalogado  Disponibilidad o no (boolean) del artículo.
+   */
+  protected void setDescatalogado(boolean descatalogado) {
+    this.descatalogado = descatalogado;
   }
   
   

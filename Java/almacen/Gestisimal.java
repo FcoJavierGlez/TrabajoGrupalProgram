@@ -45,6 +45,9 @@ public class Gestisimal {
     art.add(new Articulo(103051, "PS4", 180, 390.90, 20));
     
     
+    //Borra la pantalla de la consola de inicio, antes de ejecutar el programa:
+    borraPantalla();
+    
     //Inicio de programa:
     while(numeroMenu!=7) {
       
@@ -53,35 +56,44 @@ public class Gestisimal {
       switch(numeroMenu) {
         
         case 1:
-          imprimeLista(art);
+          imprimeLista(art);  //Imprimimos la lista          
+          esperaSegundos(3);  //Esperamos 3 segundos antes de volver a mostrar el menú
           break;
           
         case 2:
           darDeAlta(art, s);
+          esperaSegundos(1);  //Esperamos 1 segundo antes de volver a mostrar el menú
+          borraPantalla();    //Borra la pantalla de la consola
           break;
           
         case 3:
           darDeBaja(art, s);
+          esperaSegundos(1);  //Esperamos 1 segundo antes de volver a mostrar el menú
+          borraPantalla();    //Borra la pantalla de la consola
           break;
           
         case 4:
-          //aquí la función
+          modificaArticulo(art, s);
+          esperaSegundos(1);  //Esperamos 1 segundo antes de volver a mostrar el menú
+          borraPantalla();    //Borra la pantalla de la consola
           break;
           
         case 5:
           entradaMercancia(art, s);
+          esperaSegundos(1);  //Esperamos 1 segundo antes de volver a mostrar el menú
+          borraPantalla();    //Borra la pantalla de la consola
           break;
           
         case 6:
           salidaMercancia(art, s);
+          esperaSegundos(1);  //Esperamos 1 segundo antes de volver a mostrar el menú
+          borraPantalla();    //Borra la pantalla de la consola
           break;
           
         default:
-          System.out.println("\n\nFIN DE PROGRAMA.");
-          
-        esperaSegundos(2);
-          
-          System.exit(0);
+          System.out.println("\n\nFIN DE PROGRAMA.");   //Mensaje de fin de programa       
+          esperaSegundos(2);                            //Esperamos 2 segundos   
+          System.exit(0);                               //Cerramos el programa con valor 0
       }      
     }
     
@@ -102,10 +114,10 @@ public class Gestisimal {
     
     int numeroMenu;
     
-    do {
-      
-      System.out.print("\n\nPor favor elija una opción:");
-      System.out.print("\n(1) Listado");
+    do {      
+      System.out.print("\n\nMenú:");
+      System.out.print("\n-----");
+      System.out.print("\n\n(1) Listado");
       System.out.print("\n(2) Alta");
       System.out.print("\n(3) Baja");
       System.out.print("\n(4) Modificación");
@@ -113,7 +125,7 @@ public class Gestisimal {
       System.out.print("\n(6) Salida de mercancia");
       System.out.println("\n(7) Salir");
       numeroMenu=s.nextInt();
-      
+      s.nextLine();
     } while (numeroMenu<1 || numeroMenu>7);
     
     return numeroMenu;    
@@ -157,37 +169,41 @@ public class Gestisimal {
     double precioVenta;
     int stock = 0;
     
+    //Borra la pantalla de la consola
+    borraPantalla();
+    
     //Informamos que va a introducir un nuevo artículo:
     System.out.print("\nHa seleccionado dar de alta un artículo:");
     
     //Pedimos la descripción del artículo:
     System.out.println("\n\nInserte la descripción del artículo:");
-    s.nextLine();
     descripcion = s.nextLine();
     
     //Pedimos el precio de compra:
     System.out.println("\n\nInserte el precio de compra del artículo:");
     precioCompra = s.nextDouble();
+    s.nextLine();
     
     //Pedimos el precio de venta:
     System.out.println("\n\nInserte el precio de venta del artículo:");
     precioVenta = s.nextDouble();
+    s.nextLine();
     
     //Preguntamos si han entrado unidades en stock para añadir cantidad:
     do {
       System.out.println("\n\n¿Han entrado unidades en stock? (S/N)");
-      s.nextLine();
       respuesta = s.nextLine().toUpperCase();
     } while(!(respuesta.equals("S") || respuesta.equals("SI") || respuesta.equals("N") || respuesta.equals("NO")));
     
     /*
-     * Si la repsuesta es sí añadimos una cantidad:
+     * Si la respuesta es sí añadimos una cantidad:
      */
     if (respuesta.equals("S") || respuesta.equals("SI")) {
       respuesta = "";      
       do {  //Evitamos números negativos:
         System.out.println("\n\n¿Cuántas unidades han entrado en stock?");
         stock = s.nextInt();
+        s.nextLine();
       } while (stock<0);      
     } else {    //Si la respuesta es no, por defecto el valor es 0:
       respuesta = "";
@@ -196,6 +212,7 @@ public class Gestisimal {
     //Pedimos el código de artículo (NO SE PUEDE REPETIR!!):
     System.out.println("\n\nInserte el código del artículo:");
     codigo = s.nextInt();
+    s.nextLine();
     
     //Creamos el objeto:
     art.add(new Articulo(codigo, descripcion, precioCompra, precioVenta, stock));
@@ -205,7 +222,8 @@ public class Gestisimal {
       //Si se ha repetido lo tenemos que cambiar a la fuerza:
       System.out.print("\n\nEl código del artículo está repetido, no puede repetir el código.");
       System.out.println("\n\nPor favor, inserte un código de artículo válido:");
-      codigo = s.nextInt();      
+      codigo = s.nextInt();
+      s.nextLine();
       (art.get(art.size()-1)).setCodigo(codigo);   //Reasignamos el código
     }
     
@@ -216,7 +234,6 @@ public class Gestisimal {
     //Preguntamos si acepta los cambios (el objeto está creado por defecto):
     do {
       System.out.println("\n\n¿Desea guardar los cambios? (S/N)");
-      s.nextLine();
       respuesta = s.nextLine().toUpperCase();
     } while(!(respuesta.equals("S") || respuesta.equals("SI") || respuesta.equals("N") || respuesta.equals("NO")));
     
@@ -242,10 +259,12 @@ public class Gestisimal {
     String respuesta = "";
     int numero;
     
+    //Borra la pantalla de la consola
+    borraPantalla();
+    
     //Preguntamos si quiere ver la lista de artículos:
     do {
       System.out.println("\n\n¿Desea ver la lista de artículos? (S/N)");
-      s.nextLine();
       respuesta = s.nextLine().toUpperCase();
     } while(!(respuesta.equals("S") || respuesta.equals("SI") || respuesta.equals("N") || respuesta.equals("NO")));
            
@@ -266,15 +285,162 @@ public class Gestisimal {
       System.out.println("\n\nUsted no puede dar de baja un artículo cuyas existencias sigan almacenadas.");
     } else if ((art.get(numero-1)).getStock()==0 && !(art.get(numero-1)).getDescatalogado()) {
       System.out.println("\n\n¡CUIDADO! El artículo no está descatalogado, ¿está seguro que desea darlo de baja? (S/N)");
-      s.nextLine();
       respuesta = s.nextLine().toUpperCase();
       System.out.println("\n\nEl artículo ha sido borrado con éxito.");
       if (respuesta.equals("S") || respuesta.equals("SI")) {
         art.remove(numero-1);
       }
     } else {
+      System.out.println("\n\nEl artículo ha sido borrado con éxito.");
       art.remove(numero-1);
     }
+    
+    //Esperamos 2 segundos:
+    esperaSegundos(2);
+  }
+  
+  
+  /**
+   * Modifica los atributos de un artículo seleccionado, los atributos modificables son:
+   * <ul>
+   * <li>Código</li>
+   * <li>Descripción</li>
+   * <li>Precio de compra</li>
+   * <li>Precio de venta</li>
+   * <li>Disponibilidad según catálogo</li>
+   * </ul>
+   * 
+   * @param art Lista de artículos
+   * @param s   Scanner
+   */
+  private static void modificaArticulo(ArrayList<Articulo> art, Scanner s) {
+    //Variables de selección:
+    int numeroArticulo;       //Número del artículo a modificar
+    int opcionMenu = 0;       //Opción de menú que elija el usuario
+    String respuesta = "";    //Respuesta para confirmar cambios
+    
+    //Variables para el artículo a modificar:
+    int codigo;               //Código del artículo
+    String descripcion = "";  //Descricipción
+    double precioCompra;      //Precio de compra
+    double precioVenta;       //Precio de venta
+    
+    //Borra la pantalla de la consola
+    borraPantalla();
+    
+    //Preguntamos si quiere ver la lista de artículos:
+    do {
+      System.out.println("\n\n¿Desea ver la lista de artículos? (S/N)");
+      respuesta = s.nextLine().toUpperCase();
+    } while(!(respuesta.equals("S") || respuesta.equals("SI") || respuesta.equals("N") || respuesta.equals("NO")));
+           
+    //Si la respuesta es afirmativa imprimimos la lista:
+    if (respuesta.equals("S")) {
+      imprimeLista(art);
+    }
+    
+    //Reseteamos el valor de la variable respuesta:
+    respuesta = "";
+    
+    //Comprobamos que el artículo selecciondo sea corecto:
+    numeroArticulo = seleccionArticulo(art, s);
+    
+    /*
+     * Entramos en un doble bucle do-while:
+     * 
+     *  -El primero imprime un menú con las opciones a modificar, y lo imprimirá mientras 
+     *  la opción sea inválida o se quiera seguir modificando atributos.
+     *  -El segundo pregunta al usuario si desea modificar otro atributo del artículo seleccionado 
+     *  si la repsuesta es sí volveremos al bucle del menú, si la respuesta es no terminamos.
+     */
+    do {  
+      borraPantalla();    //Borramos para que no se acumule texto en consola: 
+      do {        
+        System.out.print("\n\n¿Qué atributo desea modificar?");
+        System.out.print("\n(1) Modificar código.");
+        System.out.print("\n(2) Modificar descripción.");
+        System.out.print("\n(3) Modificar precio de compra.");
+        System.out.print("\n(4) Modificar precio de venta.");
+        System.out.print("\n(5) Modificar disponibilidad (descatalogado).");
+        System.out.print("\n(6) Salir.");
+        opcionMenu=s.nextInt();
+        s.nextLine();
+      } while (opcionMenu<1 || opcionMenu>6);      
+      
+      //Aquí modificamos el artículo según la opción elegida:
+      switch (opcionMenu) {
+        case 1:
+          //Pedimos el código de artículo (NO SE PUEDE REPETIR!!):
+          System.out.println("\n\nInserte el código del artículo:");
+          codigo = s.nextInt();
+          s.nextLine();
+          
+          //Y comprobamos que no se haya repetido el código con ningún otro artículo de la lista:
+          while((art.get(numeroArticulo-1)).repiteCodigo(art, codigo)) {    //Comprobamos que en la última posición no se haya repetido código           
+            //Si se ha repetido lo tenemos que cambiar a la fuerza:
+            System.out.print("\n\nEl código del artículo está repetido, no puede repetir el código.");
+            System.out.println("\n\nPor favor, inserte un código de artículo válido:");
+            codigo = s.nextInt(); 
+            s.nextLine();
+            (art.get(numeroArticulo-1)).setCodigo(codigo);   //Reasignamos el código
+          }
+          
+          //Si no se repite lo cambiamos:
+          (art.get(numeroArticulo-1)).setCodigo(codigo);
+          break;
+        
+        case 2: //Nueva descripción:
+          System.out.println("\n\nInserte la nueva descripción:");
+          descripcion = s.nextLine();
+          (art.get(numeroArticulo-1)).setDescripcion(descripcion);
+          break;
+          
+        case 3: //Nuevo precio de compra:
+          System.out.println("\n\nInserte el nuevo precio de compra:");
+          precioCompra = s.nextDouble();
+          s.nextLine();
+          (art.get(numeroArticulo-1)).setPrecioCompra(precioCompra);
+          break;
+          
+        case 4: //Nuevo precio de venta:
+          System.out.println("\n\nInserte el nuevo precio de venta:");
+          precioVenta = s.nextDouble();
+          s.nextLine();
+          (art.get(numeroArticulo-1)).setPrecioCompra(precioVenta);
+          break;
+          
+        case 5: //Cambiar el estado del catálogo:
+          do {
+            System.out.println("\n\n¿Está descatalogado el artículo? (S/N)");
+          respuesta = s.nextLine().toUpperCase();
+          } while (!(respuesta.equals("S") || respuesta.equals("N")));          
+          
+          //Si la respuesta es sí mandamos como parámetro "verdadero" al método que activa el descatálogo:
+          if (respuesta.equals("S")) {
+            (art.get(numeroArticulo-1)).setDescatalogado(true);
+          }
+          
+          //Reiniciamos la respuesta:
+          respuesta = "";
+          
+          break;
+          
+        default:
+          respuesta = "N";
+      }
+      
+      //Borramos pantalla:
+      borraPantalla();
+      
+      //Si la opción del menú no es 6 (Salir) preguntamos al usuario si quiere modificar otro atributo:
+      if (opcionMenu!=6) {
+        System.out.println("\n\n¿Desea modificar otro atributo del artículo? (S/N)");
+        respuesta = s.nextLine().toUpperCase();
+      }
+      
+    } while (respuesta.equals("S") || respuesta.equals("SI"));
+    
+    
   }
   
   
@@ -290,10 +456,12 @@ public class Gestisimal {
     int numero;
     int cantidadArticulos;
     
+    //Borra la pantalla de la consola
+    borraPantalla();
+    
     //Preguntamos si quiere ver la lista de artículos:
     do {
       System.out.println("\n\n¿Desea ver la lista de artículos? (S/N)");
-      s.nextLine();
       respuesta = s.nextLine().toUpperCase();
     } while(!(respuesta.equals("S") || respuesta.equals("SI") || respuesta.equals("N") || respuesta.equals("NO")));
            
@@ -308,18 +476,21 @@ public class Gestisimal {
     //Pedimos el número de artículos a ingresar:
     System.out.println("\n\n¿Cuántos artículos desea ingresar?");
     cantidadArticulos = s.nextInt();
+    s.nextLine();
     
+    //Mientras el número sea negativo le negamos la entrada al usuario y solicitamos un nuevo valor:
     while(cantidadArticulos<0) {
       System.out.print("\n\nNo puede introducir una cantidad negativa de artículos, introduzca un valor positivo.");
       System.out.println("\n\n¿Cuántos artículos desea registrar?");
       cantidadArticulos = s.nextInt();
+      s.nextLine();
     }
     
     //Si el artículo está descatalogado no se puede añadir al almacén.
     if((art.get(numero-1)).getDescatalogado()) {
       System.out.println("\n\nLo siento, usted no puede añadir artículos descatalogados.");
     } else {    //De lo contrario se añaden más existencias:
-      (art.get(numero-1)).setStock(cantidadArticulos);
+      (art.get(numero-1)).cambiaStock(cantidadArticulos);
     }
   }
   
@@ -336,10 +507,12 @@ public class Gestisimal {
     int numero;
     int cantidadArticulos;
     
+    //Borra la pantalla de la consola
+    borraPantalla();
+    
     //Preguntamos si quiere ver la lista de artículos:
     do {
       System.out.println("\n\n¿Desea ver la lista de artículos? (S/N)");
-      s.nextLine();
       respuesta = s.nextLine().toUpperCase();
     } while(!(respuesta.equals("S") || respuesta.equals("SI") || respuesta.equals("N") || respuesta.equals("NO")));
            
@@ -353,13 +526,16 @@ public class Gestisimal {
     
     System.out.println("\n\n¿Cuántos artículos desea retirar?");
     cantidadArticulos = s.nextInt();
+    s.nextLine();
     
-    while(cantidadArticulos>0) {
-      System.out.print("\n\nNo puede retirar una cantidad positiva de artículos, introduzca un valor negativo.");
-      System.out.println("\n\n¿Cuántos artículos desea registrar?");
-      cantidadArticulos = s.nextInt();
+    //Si el número ingresado es positivo lo pasamos a negativo:
+    if (cantidadArticulos>0) {
+      cantidadArticulos *= -1;
     }
-    (art.get(numero-1)).setStock(cantidadArticulos);  
+    (art.get(numero-1)).cambiaStock(cantidadArticulos);
+    
+    //Esperamos 3 segundos:
+    esperaSegundos(3);
   }
   
   
@@ -380,6 +556,10 @@ public class Gestisimal {
       //Pedimos el número del artículo a sacar:
       System.out.println("\n\nIndique el número de artículo según la lista.");
       numero = s.nextInt();
+      s.nextLine();
+      
+      //Limpiamos la consola:
+      borraPantalla();
       
       //Comprobamos que el número introducido sea correcto:
       if (numero<1 || numero>art.size()) {
@@ -387,10 +567,12 @@ public class Gestisimal {
       } else {
         System.out.print("\n\nHa seleccionado el artículo nº" + numero + ": \n" + (art.get(numero-1).toString()));
         System.out.println("\n\n¿Es correcto el artículo seleccionado? (S/N)");
-        s.nextLine();
         respuesta = s.nextLine().toUpperCase();
       }
     } while (!(respuesta.equals("S") || respuesta.equals("SI")));
+    
+    //Borramos pantalla:
+    borraPantalla();
     
     return numero;    
   }
@@ -402,6 +584,15 @@ public class Gestisimal {
     try {
       Thread.sleep(n*1000);
     } catch(Exception e) {}
+  }
+  
+  /**
+   * Borra todo lo que haya en consola.
+   */
+  private static void borraPantalla() {    
+    try {
+      new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+    } catch (Exception e) {}  
   }
   
   
