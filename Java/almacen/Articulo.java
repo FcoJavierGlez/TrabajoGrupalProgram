@@ -1,28 +1,19 @@
 package almacen;
 
-import java.util.Scanner;
+import java.util.ArrayList;
 
 /**
  * 
- * Crea el programa GESTISIMAL (GESTIón SIMplificada de Almacén) para llevar
- * el control de los artículos de un almacén. De cada artículo se debe saber
- * el código, la descripción, el precio de compra, el precio de venta y el stock
- * (número de unidades). El menú del programa debe tener, al menos, las
- * siguientes opciones:
- * 
- * 1. Listado
- * 2. Alta
- * 3. Baja
- * 4. Modificación
- * 5. Entrada de mercancía
- * 6. Salida de mercancía
- * 7. Salir
- * 
- * La entrada y salida de mercancía supone respectivamente el incremento y
- * decremento de stock de un determinado artículo. Hay que controlar que no se
- * pueda sacar más mercancía de la que hay en el almacén.
- * 
- * 
+ * Clase artículo encargada de llevar un control sobre los artículos que están almacenados en un almacén. 
+ * Se almacenan de cada uno de los artículos:
+ * <ul>
+ * <li>Código de referencia (único)</li>
+ * <li>Descripción</li>
+ * <li>Precio con el que fue comprado</li>
+ * <li>Precio al que debe ser vendido</li>
+ * <li>Cantidad de unidades almacenadas (stock)</li>
+ * <li>Si está o no descatalogado</li>
+ * </ul>
  * 
  * 
  * @author Francisco Javier González Sabariego
@@ -40,6 +31,8 @@ public class Articulo {
   
   private int stock;
   
+  //private boolean descatalogado;
+  
   /**
    * Constructor
    */
@@ -55,7 +48,19 @@ public class Articulo {
     
     this.stock = stock;
     
+    //this.descatalogado = false;
     
+    
+  }
+  
+  
+  /**
+   * Asigna una cantidad determinada de stock en un artículo.
+   * 
+   * @param numArticulos  La cantidad a insertar en el stock
+   */
+  protected void setStock(int numArticulos) {    
+    this.stock = numArticulos;    
   }
   
   
@@ -70,32 +75,26 @@ public class Articulo {
    * En caso de querer reducir un total de artículos superior al almacenado muestra un mensaje 
    * de información al usuario y no hace ningún cambio.
    * 
-   * @param numArticulos  La cantidad a modificar el stock
+   * @param cantidad  Unidades a modificar en el stock (int)
    */
-  private void setStock(int numArticulos) {
-    
-    if (numArticulos<0) {
-      
-      if (Math.abs(numArticulos)>this.stock) {
+  protected void cambiaStock(int cantidad) {    
+    if (cantidad<0) {      
+      if (Math.abs(cantidad)>this.stock) {
         System.out.print("\n\nNo puede retirar más artículos de los que hay disponibles en stock.");
-        System.out.print("\n\nUsted desea retirar " + Math.abs(numArticulos) + " artículos y hay en stock " + this.stock + ".");
-        System.out.print("\n\nPor favor introduzca una cantidad válida.");
+        System.out.print("\n\nUsted desea retirar " + Math.abs(cantidad) + " artículos y hay en stock " + this.stock + ".");
       } else {
-        this.stock += numArticulos;
-      }
-      
-    } else {
-      
-      this.stock += numArticulos;
-      
-    }
-    
+        this.stock += cantidad;
+      }      
+    } else {      
+      this.stock += cantidad;      
+    }    
   }
   
   
   /**
+   * Devuelve la cantidad de unidades almacenadas.
    * 
-   * @return
+   * @return  Unidades almacenadas (int)
    */
   public int getStock() {
     return this.stock;
@@ -103,58 +102,136 @@ public class Articulo {
   
   
   /**
+   * Devuelve el precio por el que fue comprado el artículo.
    * 
-   * @param numArticulos
-   * @return
+   * @return  Precio de compra (double)
    */
-  protected void entradaMercancia() {
-    int numArticulos;
-    Scanner s = new Scanner(System.in);
-    
-    System.out.println("\n\n¿Cuántos artículos desea registrar?");
-    numArticulos = s.nextInt();
-    
-    while(numArticulos<0) {
-      System.out.print("\n\nNo puede introducir una cantidad negativa de artículos, introduzca un valor positivo.");
-      System.out.println("\n\n¿Cuántos artículos desea registrar?");
-      numArticulos = s.nextInt();
-    }
-    
-    this.setStock(numArticulos);
-    
+  public double getPrecioComp() {
+    return this.precioCompra;
   }
   
   
   /**
+   * Devuelve el precio por el que debe ser vendido el artículo.
    * 
-   * @param numArticulos
-   * @return
+   * @return  Precio de venta (double)
    */
-  protected void salidaMercancia() {
-    int numArticulos;
-    Scanner s = new Scanner(System.in);
-    
-    System.out.print("\n\n¿Cuántos artículos desea retirar?");
-    numArticulos = s.nextInt();
-    
-    while(numArticulos>0) {
-      System.out.print("\n\nNo puede retirar una cantidad positiva de artículos, introduzca un valor negativo.");
-      System.out.println("\n\n¿Cuántos artículos desea registrar?");
-      numArticulos = s.nextInt();
-    }
-    
-    this.setStock(numArticulos);
-    
+  public double getPrecioVen() {
+    return this.precioVenta;
   }
   
   
-  public String toString() {
-    
-    return "Código de art: " + this.codigo + "\nDescripción: " +
-            this.descripcion + "\nPrecio de compra: " + this.precioCompra + 
-            "\nPrecio de venta: " + this.precioVenta + "\nArtículos en almacén: " + this.stock;
-    
+  /**
+   * Devuelve el código del artículo.
+   * 
+   * @return  Descripcion del artículo (String)
+   */
+  public String getDescripcion() {
+    return this.descripcion;
   }
   
-
+  /**
+   * Devuelve la descripcion del artículo.
+   * 
+   * @return Código del artículo (int)
+   */
+  public int getCodigo() {
+    return this.codigo;
+  }
+  
+  
+  /**
+   * Devuelve un booleano con la información de si el artículo está o no descatalogado.
+   * 
+   * @return  Verdadero o falso.
+   */
+  /**
+  public boolean getDescatalogado() {
+    return this.descatalogado;
+  }
+  
+  */
+  
+  /**
+   * Comprueba que el código de artículo insertado no se repite en el resto de artículos.
+   * 
+   * @param art             Lista de artículos.
+   * @param numeroCodigo    Código insertado por el usuario
+   * @return                Verdadero o falso
+   */
+  public boolean repiteCodigo(ArrayList<Articulo> art, int numeroCodigo) {
+    
+    for (int i=0; i<art.size()-1;i++) {
+      if ((art.get(i)).codigo == numeroCodigo) {
+        return true;
+      }
+    }    
+    return false;
+  }
+  
+  /**
+   * Inserta un código de artículo.
+   * 
+   * @param numeroCodigo  Código (int) de artículo.
+   */
+  protected void setCodigo(int numeroCodigo) {
+    this.codigo = numeroCodigo;
+  }
+  
+  
+  /**
+   * Inserta la descripción del artículo.
+   * 
+   * @param descripcion  Descripción (String) del artículo.
+   */
+  protected void setDescripcion(String descripcion) {
+    this.descripcion = descripcion;
+  }
+  
+  
+  /**
+   * Inserta el precio de compra del artículo.
+   * 
+   * @param precioCompra  Precio (double) con el que fue comprado el artículo.
+   */
+  protected void setPrecioCompra(double precioCompra) {
+    this.precioCompra = precioCompra;
+  }
+  
+  
+  /**
+   * Inserta el precio de venta del artículo.
+   * 
+   * @param precioVenta  Precio (double) de venta del artículo.
+   */
+  protected void setPrecioVenta(double precioVenta) {
+    this.precioVenta = precioVenta;
+  }
+  
+  
+  /**
+   * Inserta la disponibilidad del artículo.
+   * 
+   * @param descatalogado  Disponibilidad o no (boolean) del artículo.
+   */
+  /**
+  protected void setDescatalogado(boolean descatalogado) {
+    this.descatalogado = descatalogado;
+  }
+  */
+  
+  /**
+   * Imprime el estado de cada artículo:
+   */
+  public String toString() {    
+    /**if (!this.descatalogado) {*/
+      return "Código de art: " + this.codigo + "\nDescripción: " +
+          this.descripcion + "\nPrecio de compra: " + this.precioCompra + 
+          "\nPrecio de venta: " + this.precioVenta + "\nArtículos en almacén: " + this.stock;
+    /**} else {
+      return "Código de art: " + this.codigo + "\nDescripción: " +
+          this.descripcion + "\nPrecio de compra: " + this.precioCompra + 
+          "\nPrecio de venta: " + this.precioVenta + "\nArtículos en almacén: " + this.stock + "\nDESCATALOGADO";
+    }  */  
+  }
 }
