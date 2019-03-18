@@ -2,7 +2,8 @@ package almacen;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-
+import java.sql.ResultSet;
+import java.sql.SQLException;
 /**
  * 
  * Crea el programa GESTISIMAL (GESTIón SIMplificada de Almacén) para llevar
@@ -33,18 +34,31 @@ public class Gestisimal {
     Scanner s = new Scanner (System.in);
     
     //Variables:
-    int numeroMenu = 0;    
-    int cantidadArticulos = 0;
+    int numeroMenu = 0;
     
-    
-    //Artículos:    
+    /**
+     * Hacemos una consulta a la base de datos para sacar todos los productos 
+     * y definimos un ArrayList del objeto Articulo donde vamos añadiendo los articulos de la
+     * base de datos.
+     */
     ArrayList<Articulo> art = new ArrayList<Articulo>();
-    
-    art.add(new Articulo(103049, "Libro", 5.5, 19.90, 100));
-    art.add(new Articulo(103050, "TV", 500, 799.90, 50));
-    art.add(new Articulo(103051, "PS4", 180, 390.90, 20));
-    
-    
+    ResultSet rs = BaseDatos.selectAll();
+    if(rs != null) {
+    try{
+      while (rs.next()) {
+        art.add(new Articulo(rs.getInt("Codigo"), rs.getString("Nombre"), rs.getDouble("PrecioC"), rs.getDouble("PrecioV"), rs.getInt("Stock")));
+      }
+    }
+    catch(SQLException e) {
+      System.out.println("Error con la base de datos.");
+      System.exit(1);
+      //System.err.println(e.getMessage());
+    }
+    }
+    else {
+      System.out.println("No hay articulos en la base de datos.");
+    }
+        
     //Borra la pantalla de la consola de inicio, antes de ejecutar el programa:
     borraPantalla();
     
@@ -91,8 +105,14 @@ public class Gestisimal {
           break;
           
         default:
-          System.out.println("\n\nFIN DE PROGRAMA.");   //Mensaje de fin de programa       
-          esperaSegundos(2);                            //Esperamos 2 segundos   
+          System.out.println("GUARDANDO CAMBIOS...");
+          BaseDatos.deleteAll();
+          for (int i = 0; i < art.size(); i++) {
+            BaseDatos.insert((art.get(i)).getCodigo(),(art.get(i)).getDescripcion(),(art.get(i)).getPrecioComp(),(art.get(i)).getPrecioVen(),(art.get(i)).getStock());
+            System.out.println("Insertado articulo " + (art.get(i)).getCodigo() + " en la DB");
+          }
+          System.out.println("\n\nFIN DE PROGRAMA.");   //Mensaje de fin de programa
+          esperaSegundos(2);                            //Esperamos 2 segundos
           System.exit(0);                               //Cerramos el programa con valor 0
       }      
     }
@@ -241,15 +261,12 @@ public class Gestisimal {
     if (respuesta.equals("N") || respuesta.equals("NO")) {
       art.remove(art.size()-1);
     }
-    
-    
   }
   
   /**
    * Elimina un artículo de la lista de artículos. Para ello comprueba:
    * <ul>
    * <li>Que el número de existencias de ese artículo no sea superior a 0.</li>
-   * <li>Que el artículo esté o no descatalogado.</li>
    * </ul>
    * 
    * @param art   Lista de artículos
@@ -278,19 +295,13 @@ public class Gestisimal {
     
     /*
      * -Si quedan existencias del artículo no puede ser borrado.
-     * -Si no quedan existencias del artículo pero éste no está descatalogado entonces se le advierte al usuario.
-     * -Si no quedan existencias y el artículo está descatalogado se borra sin más.
+     * -Si no quedan existencias se borra sin más.
      */
     if ((art.get(numero-1)).getStock()!=0) {
       System.out.println("\n\nUsted no puede dar de baja un artículo cuyas existencias sigan almacenadas.");
-    } else if ((art.get(numero-1)).getStock()==0 && !(art.get(numero-1)).getDescatalogado()) {
-      System.out.println("\n\n¡CUIDADO! El artículo no está descatalogado, ¿está seguro que desea darlo de baja? (S/N)");
-      respuesta = s.nextLine().toUpperCase();
-      System.out.println("\n\nEl artículo ha sido borrado con éxito.");
-      if (respuesta.equals("S") || respuesta.equals("SI")) {
-        art.remove(numero-1);
-      }
-    } else {
+    }
+    
+    else {
       System.out.println("\n\nEl artículo ha sido borrado con éxito.");
       art.remove(numero-1);
     }
@@ -361,7 +372,6 @@ public class Gestisimal {
         System.out.print("\n(2) Modificar descripción.");
         System.out.print("\n(3) Modificar precio de compra.");
         System.out.print("\n(4) Modificar precio de venta.");
-        System.out.print("\n(5) Modificar disponibilidad (descatalogado).");
         System.out.print("\n(6) Salir.");
         opcionMenu=s.nextInt();
         s.nextLine();
@@ -407,22 +417,6 @@ public class Gestisimal {
           precioVenta = s.nextDouble();
           s.nextLine();
           (art.get(numeroArticulo-1)).setPrecioCompra(precioVenta);
-          break;
-          
-        case 5: //Cambiar el estado del catálogo:
-          do {
-            System.out.println("\n\n¿Está descatalogado el artículo? (S/N)");
-          respuesta = s.nextLine().toUpperCase();
-          } while (!(respuesta.equals("S") || respuesta.equals("N")));          
-          
-          //Si la respuesta es sí mandamos como parámetro "verdadero" al método que activa el descatálogo:
-          if (respuesta.equals("S")) {
-            (art.get(numeroArticulo-1)).setDescatalogado(true);
-          }
-          
-          //Reiniciamos la respuesta:
-          respuesta = "";
-          
           break;
           
         default:
@@ -474,23 +468,27 @@ public class Gestisimal {
     numero=seleccionArticulo(art, s);
     
     //Pedimos el número de artículos a ingresar:
-    System.out.println("\n\n¿Cuántos artículos desea ingresar?");
-    cantidadArticulos = s.nextInt();
-    s.nextLine();
+//    System.out.println("\n\n¿Cuántos artículos desea ingresar?");
+//    cantidadArticulos = s.nextInt();
+//    s.nextLine();
     
     //Mientras el número sea negativo le negamos la entrada al usuario y solicitamos un nuevo valor:
-    while(cantidadArticulos<0) {
-      System.out.print("\n\nNo puede introducir una cantidad negativa de artículos, introduzca un valor positivo.");
+//    while(cantidadArticulos<0) {
+//      System.out.print("\n\nNo puede introducir una cantidad negativa de artículos, introduzca un valor positivo.");
+//      System.out.println("\n\n¿Cuántos artículos desea registrar?");
+//      cantidadArticulos = s.nextInt();
+//      s.nextLine();
+//    }
+    
+   // (art.get(numero-1)).cambiaStock(cantidadArticulos);
+    
+    try {
       System.out.println("\n\n¿Cuántos artículos desea registrar?");
       cantidadArticulos = s.nextInt();
       s.nextLine();
-    }
-    
-    //Si el artículo está descatalogado no se puede añadir al almacén.
-    if((art.get(numero-1)).getDescatalogado()) {
-      System.out.println("\n\nLo siento, usted no puede añadir artículos descatalogados.");
-    } else {    //De lo contrario se añaden más existencias:
-      (art.get(numero-1)).cambiaStock(cantidadArticulos);
+      (art.get(numero-1)).incrementaStock(cantidadArticulos);
+    } catch (ErrorStockException e) {
+      System.out.println(e.getMessage());
     }
   }
   
@@ -524,15 +522,23 @@ public class Gestisimal {
     //Comprobamos que el artículo selecciondo sea corecto:
     numero=seleccionArticulo(art, s);
     
-    System.out.println("\n\n¿Cuántos artículos desea retirar?");
-    cantidadArticulos = s.nextInt();
-    s.nextLine();
+//    System.out.println("\n\n¿Cuántos artículos desea retirar?");
+//    cantidadArticulos = s.nextInt();
+//    s.nextLine();
     
     //Si el número ingresado es positivo lo pasamos a negativo:
-    if (cantidadArticulos>0) {
-      cantidadArticulos *= -1;
+//    if (cantidadArticulos>0) {
+//      cantidadArticulos *= -1;
+//    }
+   // (art.get(numero-1)).cambiaStock(cantidadArticulos);
+    try {
+      System.out.println("\n\n¿Cuántos artículos desea retirar?");
+      cantidadArticulos = s.nextInt();
+      s.nextLine();
+      (art.get(numero-1)).decrementaStock(cantidadArticulos);
+    } catch (ErrorStockException e) {
+      System.out.println(e.getMessage());
     }
-    (art.get(numero-1)).cambiaStock(cantidadArticulos);
     
     //Esperamos 3 segundos:
     esperaSegundos(3);
