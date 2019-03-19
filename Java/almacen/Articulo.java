@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * </ul>
  * 
  * 
- * @author Francisco Javier González Sabariego
+ * @author @author JavierGF00 R4f4Lc FcoJavierGlez
  *
  */
 public class Articulo {
